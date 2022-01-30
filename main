@@ -1,0 +1,56 @@
+// ==UserScript==
+// @name         Youtube UI Changer
+// @namespace    http://tampermonkey.net/
+// @version      1.2.1
+// @description  Allows you to edit some of Youtube's UI (currently only the logo in the top left and the country-code next to it)
+// @author       MetalMint
+// @include      https://www.youtube.com/*
+// @grant        none
+// ==/UserScript==
+
+console.log("[Youtube UI Changer] Starting");
+
+(function() {
+    'use strict';
+    //Editable variables ↓↓↓
+          /*Below are variables to exit Youtube's logo*/
+        let varEditable = {
+            icon_img: "http://i.stack.imgur.com/SBv4T.gif", //paste in desired URL here to replace the youtube logo (set to: null, for normal youtube icon and set to: " ", for blank)
+            icon_img_size: 70, //recommended icon_img_size = 45 to 55
+            icon_img_verticalPos: "7px", //moves the image up/down
+            icon_img_smoothening: "10%",
+
+          /*Below are variables to edit the gray text that shows up next to Youtube's logo*/
+            logo_countryCode_name: "MetalMint",
+            logo_countryCode_fontSize: "10px",
+            logo_countryCode_horizontalPos: "-8px", //moves the text right/left
+            logo_countryCode_verticalPos: "0px" //moves the text up/down
+        }
+    //Editable variables ↑↑↑
+
+    //Actual code:
+    let icon_ele = document.createElement("img");
+    icon_ele.setAttribute("src", varEditable.icon_img);
+    icon_ele.setAttribute("height", varEditable.icon_img_size);
+    icon_ele.style.borderRadius = varEditable.icon_img_smoothening;
+
+    window.addEventListener('load', function () {
+    let logo = document.getElementsByClassName('style-scope ytd-logo')[0];
+    let logo_countryCode = document.getElementsByClassName('style-scope ytd-masthead')["logo"].getElementsByClassName('style-scope ytd-topbar-logo-renderer')["country-code"];
+
+    logo_countryCode.textContent = varEditable.logo_countryCode_name;
+    logo_countryCode.setAttribute("style", `user-select:auto; position:relative; font-size:${varEditable.logo_countryCode_fontSize}; left:${varEditable.logo_countryCode_horizontalPos}; bottom:${varEditable.logo_countryCode_verticalPos}`);
+
+    if (varEditable.icon_img !== null) {
+        logo.setAttribute("style", "user-select: auto;bottom:" + varEditable.icon_img_verticalPos);
+        logo.replaceChildren(icon_ele);
+    }
+    let varEditable_typeOf = "";
+    for (const property in varEditable) {
+        varEditable_typeOf += `-${typeof(varEditable[property])}
+`;
+    }
+    console.log("[Youtube UI Changer] debug var-types:\n" + varEditable_typeOf);
+    console.log("[Youtube UI Changer] All done!");
+    })();
+})();
